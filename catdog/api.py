@@ -82,7 +82,7 @@ class API(object):
                     "Unknown error with %d status_code" % status_code)
 
     @classmethod
-    def required_api_key(self, func):
+    def requires_api_key(self, func):
         """Function decorator that helps to check if api_key value is not None.
 
         :param func: Function prior to which apply decorator.
