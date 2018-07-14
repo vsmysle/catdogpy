@@ -57,74 +57,33 @@ class DogApi(API):
 
         dogs_list = []
 
-        # iterate over all fetched dogs
         for dog in resp_data:
+            dogs_list.append(self.process_response(dog))
 
-            animals = []
-            breeds = []
-            categories = []
-
-            # if images has info regarding dogs breeds
-            if dog['breeds']:
-
-                # iterate over all breeds
-                for breed in dog['breeds']:
-
-                    # append Breed objects
-                    breeds.append(
-                        Breed(
-                            breed['id'],
-                            breed['name'],
-                            breed['wikipedia_url']
-                        )
-                    )
-            # if images has info regarding animals
-            if dog['animals']:
-
-                # iterate ovel all animals
-                for animal in dog['animals']:
-
-                    # append Animal objects
-                    animals.append(
-                        Animal(
-                            animal['id'],
-                            animal['name']
-                        )
-                    )
-            # if images has info regarding dogs categories
-            if dog['categories']:
-
-                # iterate over all categories
-                for category in dog['categories']:
-
-                    # append Category objects
-                    categories.append(
-                        Category(
-                            category['id'],
-                            category['name']
-                        )
-                    )
-
-            dogs_list.append(
-                Dog(
-                    dog['id'],
-                    dog['url'],
-                    dog['width'],
-                    dog['height'],
-                    breeds,
-                    animals,
-                    categories
-                )
-            )
         return dogs_list
 
     def get_image_by_id(self, image_id):
-        """Get dog by image_id.
+        """Get dog image by image_id.
 
         :param image_id: Dog image id.
         :type image_id: str
         """
-        pass
+        # compose endpoint url
+        url = ''.join([
+            self.base_url,
+            self.api_version,
+            'images/',
+            image_id
+        ])
+
+        # make request to remote server
+        resp = self.make_request('get', url)
+
+        # convert response to python dict
+        resp_data = resp.json()
+
+        dog = self.process_response(resp_data)
+        return dog
 
     @API.requires_api_key
     def upload_image(self, filepath, sub_id=None, breed_ids=None):
@@ -159,7 +118,7 @@ class DogApi(API):
         """."""
         pass
 
-    @API.required_api_key
+    @API.requires_api_key
     def delete_breed_from_image(self, breed_id):
         """."""
         pass
@@ -211,3 +170,71 @@ class DogApi(API):
     def delete_vote_by_id(self, dog_image_id, sub_id=None):
         """."""
         pass
+
+    @staticmethod
+    def process_response(resp_data):
+        """Creates Dog object from response data.
+
+        :param resp_data: Response data.
+        :type resp_data: dict
+        :return dog: Dog object.
+        :rtype: models.Dog
+        """
+        animals = []
+        breeds = []
+        categories = []
+
+        # if images has info regarding dogs breeds
+        try:
+            if resp_data['breeds']:
+
+                # iterate over all breeds
+                for breed in resp_data['breeds']:
+
+                    # append Breed objects
+                    breeds.append(
+                        Breed(**breed)
+                    )
+        except KeyError:
+            pass
+
+        # if images has info regarding animals
+        try:
+            if resp_data['animals']:
+
+                # iterate ovel all animals
+                for animal in resp_data['animals']:
+
+                    # append Animal objects
+                    animals.append(
+                        Animal(**animal)
+                    )
+        except KeyError:
+            pass
+
+        # if images has info regarding dogs categories
+        try:
+            if resp_data['categories']:
+
+                # iterate over all categories
+                for category in resp_data['categories']:
+                    print(category)
+                    # append Category objects
+                    categories.append(
+                        Category(**category)
+                    )
+        except KeyError:
+            pass
+
+        dog_data = {
+            'id': resp_data['id'],
+            'url': resp_data['url'],
+            'image_width': resp_data['width'],
+            'image_height': resp_data['height'],
+            'breeds': breeds,
+            'animals': animals,
+            'categories': categories
+        }
+
+        dog = Dog(**dog_data)
+        return dog

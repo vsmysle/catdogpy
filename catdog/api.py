@@ -29,13 +29,18 @@ class API(object):
         if api_key:
             self.api_key = api_key
         else:
-            api_key = environ.get("%s_API_KEY" % child_class_name.upper())
+            api_key = environ.get("%s_API_KEY" % child_class_name.upper()[:4])
             if api_key:
                 self.api_key = api_key
             else:
                 raise APIKeyNotSpecified("Please specify API key!")
 
-        self.base_url = "http://the%sapi.com/api" % child_class_name.lower()
+        # check the child api name and set base_url according to it
+        if child_class_name == "DogApi":
+            self.base_url = "https://api.thedogapi.com"
+        else:
+            self.base_url = "http://thecatapi.com/api"
+
         self.api_version = '/v1/'
         if debug:
             logger.setLevel("DEBUG")
