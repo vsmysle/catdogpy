@@ -61,7 +61,7 @@ class Breed(object):
         self.wiki_url = wiki_url
 
     def __repr__(self):
-        """Represents breed in a human-readable way."""
+        """Represents breed obj in a human-readable way."""
         pass
 
 
@@ -80,5 +80,23 @@ class Category(object):
         self.name = name
 
     def __repr__(self):
-        """Represents category in human-readable way."""
+        """Represents category obj in a human-readable way."""
         pass
+
+
+class Animal(object):
+    """Animal class."""
+
+    def __init__(self, animal_id, name):
+        """Animal object init.
+
+        :param animal_id: Animal id.
+        :type animal_id: int
+        :param name: Animal name.
+        :type name: str
+        """
+        self.animal_id = animal_id
+        self.name = name
+
+    def __repr__(self):
+        """Represents animal obj in a human-readable way."""

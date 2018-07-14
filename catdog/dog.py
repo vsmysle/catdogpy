@@ -1,6 +1,6 @@
 """DogApi module."""
 from .api import API
-from .models import Breed, Category, Dog
+from .models import Animal, Breed, Category, Dog
 
 
 class DogApi(API):
@@ -35,15 +35,19 @@ class DogApi(API):
         if not isinstance(limit, int):
             limit = 1
 
+        # combining search url
         search_url = ''.join([
             self.base_url,
             self.api_key,
             'search'
         ])
 
-        # TODO
-        # params = [x if x for x in self.search.__code__.co_varnames]
         params = {}
+
+        # filling the params dict
+        for arg in self.search.__code__.co_varnames:
+            if eval(arg):
+                params[arg] = eval(arg)
 
         # fetching Dogs from API
         resp = self.make_request(search_url, params)
@@ -72,6 +76,19 @@ class DogApi(API):
                             breed['id'],
                             breed['name'],
                             breed['wikipedia_url']
+                        )
+                    )
+            # if images has info regarding animals
+            if dog['animals']:
+
+                # iterate ovel all animals
+                for animal in dog['animals']:
+
+                    # append Animal objects
+                    animals.append(
+                        Animal(
+                            animal['id'],
+                            animal['name']
                         )
                     )
             # if images has info regarding dogs categories

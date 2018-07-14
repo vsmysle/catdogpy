@@ -2,10 +2,6 @@
 from .api import API
 
 
-class Cat(object):
-    pass
-
-
 class CatApi(API):
     """CatApi class."""
 
