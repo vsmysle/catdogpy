@@ -1,13 +1,6 @@
 """Custom exceptions module."""
 
 
-class APINotSpecified(Exception):
-    """APINotSpecified exception.
-    Raises when API (dog/cat) was not specified.
-    """
-    pass
-
-
 class APIKeyNotSpecified(Exception):
     """APIKeyNotSpecified exception.
     Raises when API key was not specified.
