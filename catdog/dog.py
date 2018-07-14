@@ -5,8 +5,9 @@ from .api import API
 class Dog(API):
     """Dog class."""
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         """Dog object init."""
+        super().__init__(*args, **kwargs)
 
     def search(self, breed_id=None, mine_types=None, limit=1):
         """Search dogs using various filters.
@@ -34,8 +35,12 @@ class Dog(API):
 
         # TODO
         # params = [x if x for x in self.search.__code__.co_varnames]
+        params = {}
 
         resp = self.make_request(search_url, params)
+
+        # TODO
+        # set values
 
     def get_by_id(self, image_id):
         """Get dog by image_id.
@@ -45,6 +50,7 @@ class Dog(API):
         """
         pass
 
+    @API.required_api_key
     def upload(self, filepath, sub_id=None, breed_ids=None):
         """Upload Dog image to the API.
 
@@ -59,6 +65,7 @@ class Dog(API):
         """
         pass
 
+    @API.required_api_key
     def delete(self, dog_id):
         """."""
         pass
