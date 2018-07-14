@@ -2,18 +2,22 @@
 
 
 class APINotSpecified(Exception):
-    """."""
-    def __init__(self, message):
-        super().__init__(message)
+    """APINotSpecified exception.
+    Raises when API (dog/cat) was not specified.
+    """
+    pass
 
 
 class APIKeyNotSpecified(Exception):
-    """."""
-    def __init__(self, message):
-        super().__init__(message)
+    """APIKeyNotSpecified exception.
+    Raises when API key was not specified.
+    """
+    pass
 
 
 class APIConnectionError(Exception):
-    """."""
-    def __init__(self, message):
-        super().__init__(message)
+    """APIConnectionError.
+    Raises when response (from remote server) status code
+    doesn't equal to 200 OK.
+    """
+    pass
