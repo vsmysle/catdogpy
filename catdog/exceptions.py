@@ -14,3 +14,11 @@ class APIConnectionError(Exception):
     doesn't equal to 200 OK.
     """
     pass
+
+
+class UnsupportedRequestType(Exception):
+    """UnsupportedRequestType.
+    Raises when request type is not in ['get', 'post', 'delete'].
+    Both APIs don't have endpoints that require other request type.
+    """
+    pass

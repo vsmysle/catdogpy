@@ -6,7 +6,8 @@ import logging
 from os import environ
 from functools import wraps
 
-from .exceptions import APIKeyNotSpecified, APIConnectionError
+from .exceptions import (APIKeyNotSpecified, APIConnectionError,
+                         UnsupportedRequestType)
 
 
 logger = logging.getLogger(__name__)
@@ -39,19 +40,44 @@ class API(object):
         if debug:
             logger.setLevel("DEBUG")
 
-    def make_request(self, req_type, url, params):
+    def make_request(self, req_type, url, headers=None,
+                     params=None, data=None):
         """Make request to remote API server.
 
         :param req_type: Request type.
         :type req_type: str
         :param url: Link to remote resource.
         :type url: str
+        :param headers: Request headers.
+        :type headers: dict
         :param params: Query params to a request.
         :type params: dict
+        :param data: Request payload.
+        :type data: dict
         :returns Response from the remote server.
         :rtype request.Response object
         """
-        resp = requests.get(url, params=params)
+        if not headers:
+            headers = {}
+        if self.api_key:
+            if self.__class__.__name__ == "DogApi":
+                headers['x-api-key'] = self.api_key
+            else:
+                params['api_key'] = self.api_key
+
+        # check the request type
+        if req_type == 'get':
+            resp = requests.get(url, headers=headers, params=params)
+        elif req_type == 'post':
+            resp = requests.post(url, headers=headers, params=params,
+                                 data=data)
+            pass
+        elif req_type == 'delete':
+            resp = requests.delete(url, headers=headers, params=params,
+                                   data=data)
+        else:
+            raise UnsupportedRequestType(
+                "API only supports get, post, delete request types.")
         self.parse_status_code(resp.status_code)
         return resp
 
