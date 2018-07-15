@@ -22,3 +22,17 @@ class UnsupportedRequestType(Exception):
     Both APIs don't have endpoints that require other request type.
     """
     pass
+
+
+class IlligalArgumentType(Exception):
+    """IlligalArgumentType.
+    Raises when method gets an argument with an illigal type.
+    """
+    pass
+
+
+class InvalidImageFile(Exception):
+    """InvalidImageFile.
+    Raises when file do not exist or it is a link.
+    """
+    pass
