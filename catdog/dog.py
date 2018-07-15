@@ -97,13 +97,52 @@ class DogApi(API):
 
         :param breed_ids: Breeds of the dogs in the image.
         :type breed_ids: list
+
+        :return resp: ???
+        :rtype: ???
         """
-        pass
+        # compose endpoint url
+        url = ''.join([
+            self.base_url,
+            self.api_version,
+            'images/upload'
+        ])
+
+        files = {'file': open(filepath, 'rb')}
+
+        headers = {'Content-Type': 'multipart/form-data'}
+
+        data = {}
+        if sub_id:
+            data['sub_id'] == sub_id
+        if breed_ids:
+            data['breed_ids'] == breed_ids
+
+        resp = self.make_request('post', url, params=data, files=files,
+                                 headers=headers)
+        return resp
 
     @API.requires_api_key
     def delete_image_by_id(self, image_id):
-        """."""
-        pass
+        """Delete dog image from the API.
+
+        :param image_id: Image identificator.
+        :type image_id: str
+
+        :return resp: ???
+        :rtype: ???
+        """
+        # compose endpoint url
+        url = ''.join([
+            self.base_url,
+            self.api_version,
+            'image/',
+            image_id
+        ])
+
+        # delete an image from a API
+        resp = self.make_request('delete', url)
+        return resp
 
     def get_images(self, limit=1, page=0, order='DESC'):
         """."""

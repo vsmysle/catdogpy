@@ -46,7 +46,7 @@ class API(object):
             logger.setLevel("DEBUG")
 
     def make_request(self, req_type, url, headers=None,
-                     params=None, data=None):
+                     params=None, data=None, files=None):
         """Make request to remote API server.
 
         :param req_type: Request type.
@@ -75,7 +75,7 @@ class API(object):
             resp = requests.get(url, headers=headers, params=params)
         elif req_type == 'post':
             resp = requests.post(url, headers=headers, params=params,
-                                 data=data)
+                                 data=data, files=files)
             pass
         elif req_type == 'delete':
             resp = requests.delete(url, headers=headers, params=params,
