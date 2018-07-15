@@ -7,10 +7,8 @@ from os import environ
 from functools import wraps
 
 from .exceptions import (APIKeyNotSpecified, APIConnectionError,
-                         UnsupportedRequestType)
-
-
-logger = logging.getLogger(__name__)
+                         UnsupportedRequestType, UnsupportedAPIType,
+                         IlligalArgumentType)
 
 
 class API(object):
@@ -26,6 +24,10 @@ class API(object):
         """
 
         child_class_name = self.__class__.__name__
+
+        # setting logger
+        self.logger = logging.getLogger(child_class_name)
+
         if api_key:
             self.api_key = api_key
         else:
@@ -38,12 +40,16 @@ class API(object):
         # check the child api name and set base_url according to it
         if child_class_name == "DogApi":
             self.base_url = "https://api.thedogapi.com"
-        else:
+        elif child_class_name == "CatApi":
             self.base_url = "http://thecatapi.com/api"
+        else:
+            raise UnsupportedAPIType(
+                "%s is not supported." % child_class_name
+            )
 
         self.api_version = '/v1/'
         if debug:
-            logger.setLevel("DEBUG")
+            self.logger.setLevel("DEBUG")
 
     def make_request(self, req_type, url, headers=None,
                      params=None, data=None, files=None):
@@ -135,3 +141,24 @@ class API(object):
                     "You should provide API key for using this method!")
             func(*args)
         return decorated
+
+    @staticmethod
+    def check_arg_type(arg, arg_type):
+        """Checks that argument value is instance of arg_type.
+
+        :param arg: Argument value to check.
+        :type arg: any
+
+        :param arg_type: Argument class.
+        :type arg_type: class
+
+        :raises IlligalArgumentType if arg is not an instance of arg_type.
+        """
+        if not isinstance(arg, arg_type):
+            raise IlligalArgumentType(
+                "%s type is %s but it should be %s" % (
+                    arg.__name__,
+                    type(arg),
+                    arg_type
+                )
+            )

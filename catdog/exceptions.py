@@ -36,3 +36,10 @@ class InvalidImageFile(Exception):
     Raises when file do not exist or it is a link.
     """
     pass
+
+
+class UnsupportedAPIType(Exception):
+    """UnsupportedAPIType.
+    Raises when unknown child class inherits API class.
+    """
+    pass

@@ -2,7 +2,7 @@
 from os import path
 
 from .api import API
-from .exceptions import IlligalArgumentType, InvalidImageFile
+from .exceptions import InvalidImageFile
 from .models import Animal, Breed, Category, Dog
 
 
@@ -105,7 +105,8 @@ class DogApi(API):
         :rtype: ???
         """
         # check that args have valid type
-        self.check_arg_type(filepath, str)
+        if self.debug:
+            self.check_arg_type(filepath, str)
 
         # compose endpoint url
         url = ''.join([
@@ -150,6 +151,10 @@ class DogApi(API):
         :return resp: ???
         :rtype: ???
         """
+        # checking the type of image_id var if debug mode is on
+        if self.debug:
+            self.check_arg_type(image_id, str)
+
         # compose endpoint url
         url = ''.join([
             self.base_url,
@@ -221,7 +226,8 @@ class DogApi(API):
         :rtype: list
         """
         # check that args have correct type
-        self.check_arg_type(image_id, str)
+        if self.debug:
+            self.check_arg_type(image_id, str)
 
         # compose endpoint url
         url = ''.join([
@@ -254,8 +260,9 @@ class DogApi(API):
         :rtype: ???
         """
         # check that args have correct type
-        self.check_arg_type(image_id, str)
-        self.check_arg_type(breed_id, int)
+        if self.debug:
+            self.check_arg_type(image_id, str)
+            self.check_arg_type(breed_id, int)
 
         # compose endpoint url
         url = ''.join([
@@ -393,24 +400,3 @@ class DogApi(API):
 
         dog = Dog(**dog_data)
         return dog
-
-    @staticmethod
-    def check_arg_type(arg, arg_type):
-        """Checks that argument value is instance of arg_type.
-
-        :param arg: Argument value to check.
-        :type arg: any
-
-        :param arg_type: Argument class.
-        :type arg_type: class
-
-        :raises IlligalArgumentType if arg is not an instance of arg_type.
-        """
-        if not isinstance(arg, arg_type):
-            raise IlligalArgumentType(
-                "%s type is %s but it should be %s" % (
-                    arg.__name__,
-                    type(arg),
-                    arg_type
-                )
-            )
