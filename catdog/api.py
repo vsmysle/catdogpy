@@ -182,7 +182,7 @@ class API(object):
         :raises NotADirectoryError if provided out_dir is not directory
         """
         if not path.isdir(out_dir):
-            raise NotADirectoryError(
+            raise NotAValidDirectory(
                 "Either %s is not a directory or you don't access to it."
             )
         # check if obj has url attribute
