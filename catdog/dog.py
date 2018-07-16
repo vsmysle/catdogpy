@@ -281,57 +281,330 @@ class DogApi(API):
         return resp
 
     @API.requires_api_key
-    def delete_breed_from_image(self, breed_id):
-        """."""
-        pass
+    def delete_breed_from_image(self, image_id, breed_id):
+        """Delete breed from image.
+
+        :param image_id: Image identificator.
+        :type image_id: str
+
+        :param breed_id: Breed identificator.
+        :type breed_id: int
+
+        :return resp: ???
+        :rtype: ???
+        """
+        # check that args have correct type
+        if self.debug:
+            self.check_arg_type(image_id, str)
+            self.check_arg_type(breed_id, int)
+
+        # compose endpoing url
+        url = ''.join([
+            self.base_url,
+            self.api_version,
+            'images/',
+            image_id,
+            '/breeds/',
+            breed_id
+        ])
+
+        # making request to the remote server
+        resp = self.make_request('delete', url)
+
+        return resp
 
     def save_all_images(self, dogs_list):
         """."""
         pass
 
     def get_breed_by_id(self, breed_id):
-        """."""
-        pass
+        """Get breed by its identificator.
+
+        :param breed_id: Breed identificator.
+        :type breed_id: int
+
+        :return breed: Breed object.
+        :rtype: models.Breed
+        """
+        # check that arg has correct type
+        if self.debug:
+            self.check_arg_type(breed_id, int)
+
+        # compose endpoint url
+        url = ''.join([
+            self.base_url,
+            self.api_version,
+            'breeds/',
+            breed_id
+        ])
+
+        # make request to remote API server
+        resp = self.make_request('get', url)
+
+        # convert resp data to python dict
+        breed_data = resp.json()
+
+        return Breed(**breed_data)
 
     def get_breed_list(self):
-        """."""
-        pass
+        """Get all breeds.
 
-    def get_favourite_dog_by_id(self, dog_image_id):
-        """."""
-        pass
+        :return breeds_list: List of Breed obj.
+        :rtype: list
+        """
+        # compose endpoint url
+        url = ''.join([
+            self.base_url,
+            self.api_version,
+            'breeds'
+        ])
 
+        # make request to remote API server
+        resp = self.make_request('get', url)
+
+        # convert resp data to python dict
+        breeds_data = resp.json()
+
+        return [Breed(**breed) for breed in breeds_data]
+
+    @API.requires_api_key
+    def get_favourite_dog_by_id(self, favourite_id):
+        """Get favourite dog image by its identificator.
+
+        :param favourite_id: Identificator of the dog image.
+        :type favourite_id: str
+
+        :return dog: Dog object.
+        :rtype: models.Dog
+        """
+        # check that arg has correct type
+        if self.debug:
+            self.check_arg_type(favourite_id, str)
+
+        # compose endpoint url
+        url = ''.join([
+            self.base_url,
+            self.api_version,
+            'favourites/',
+            favourite_id
+        ])
+
+        # make request to remote API server
+        resp = self.make_request('get', url)
+
+        # convert resp data to python dict
+        dog_data = resp.json()
+
+        return Dog(dog_data)
+
+    @API.requires_api_key
     def get_favourite_dogs(self):
-        """."""
-        pass
+        """Get list of favourite dogs.
+
+        :return dogs_list: List of Dog objects.
+        :rtype: list
+        """
+        # compose endpoint url
+        url = ''.join([
+            self.base_url,
+            self.api_version,
+            'favourites'
+        ])
+
+        # make request to remote API server
+        resp = self.make_request('get', url)
+
+        # convert response data to python dict
+        dogs_data = resp.json()
+
+        return [Dog(**dog) for dog in dogs_data]
 
     @API.requires_api_key
-    def post_favourite_dogs(self, dog_image_id, sub_id=None):
-        """."""
-        pass
+    def post_favourite_dogs(self, image_id, sub_id):
+        """Post favourite dog.
+
+        :param image_id: Image identificator.
+        :type image_id: str
+
+        :param sub_id: User identificator.
+        :type sub_id: str
+
+        :return resp: ???
+        :rtype: ???
+        """
+        # check if args have correct types
+        if self.debug:
+            self.check_arg_type(image_id, str)
+            self.check_arg_type(sub_id, str)
+
+        # compose endpoint url
+        url = ''.join([
+            self.base_url,
+            self.api_version,
+            'favourites'
+        ])
+
+        # compose payload dict
+        payload = {
+            "image_id": image_id,
+            "sub_id": sub_id
+        }
+
+        # make request to remote server
+        resp = self.make_request('post', url, data=payload)
+
+        # convert resp data to python dict
+        result = resp.json()
+
+        return result
 
     @API.requires_api_key
-    def delete_dog_from_favourites_by_id(self, dog_image_id, sub_id=None):
-        """."""
-        pass
+    def delete_from_favourites(self, favourite_id):
+        """Delete dog image from favourites by image identificator.
+
+        :param image_id: Image identificator.
+        :type image_id: str
+
+        :return result: ???
+        :rtype: ??
+        """
+        # check if arg has correct type
+        if self.debug:
+            self.check_arg_type(favourite_id, str)
+
+        # compose endpoint url
+        url = ''.join([
+            self.base_url,
+            self.api_version,
+            'favourites/',
+            favourite_id
+        ])
+
+        # make request to remote API server
+        resp = self.make_request('delete', url)
+
+        # convert resp data to python dict
+        result = resp.json()
+
+        return result
 
     def get_votes(self):
-        """."""
-        pass
+        """Get user votes.
 
-    def get_vote_by_id(self):
-        """."""
-        pass
+        :return votes: ???
+        :rtype: ???
+        """
+        # compose endpoint url
+        url = ''.join([
+            self.base_url,
+            self.api_version,
+            'votes'
+        ])
+
+        # make request to remote API server
+        resp = self.make_request('get', url)
+
+        # convert resp data to dict
+        votes = resp.json()
+
+        return votes
+
+    def get_vote_by_id(self, vote_id):
+        """Get user vote by vote id.
+
+        :param vote_id: Vote identificator.
+        :type vote_id: str ???
+
+        :return vote: User vote ???
+        :rtype: ???
+        """
+        # check that arg has correct type
+        if self.debug:
+            self.check_arg_type(vote_id, str)
+
+        # compose endpoint url
+        url = ''.join([
+            self.base_url,
+            self.api_version,
+            'votes/',
+            vote_id
+        ])
+
+        # make request to remote API server
+        resp = self.make_request('get', url)
+
+        vote = resp.json()
+
+        return vote
 
     @API.requires_api_key
-    def post_vote(self, dog_image_id, sub_id=None):
-        """."""
-        pass
+    def post_vote(self, image_id, sub_id):
+        """Submit your vote for dog image.
+
+        :param image_id: Image identificator.
+        :type image_id: str
+
+        :param sub_id: User identificator.
+        :type sub_id: str
+
+        :return result: ???
+        :rtype: ???
+        """
+        # check that args have correct type
+        if self.debug:
+            self.check_arg_type(image_id, str)
+            self.check_arg_type(sub_id, str)
+
+        # compose endpoint url
+        url = ''.join([
+            self.base_url,
+            self.api_version,
+            'votes'
+        ])
+
+        # prepare request payload data
+        payload = {
+            "image_id": image_id,
+            "sub_id": sub_id
+        }
+
+        # make request to remote API server
+        resp = self.make_request('post', url, data=payload)
+
+        # convert response data to python dict
+        result = resp.json()
+
+        return result
 
     @API.requires_api_key
-    def delete_vote_by_id(self, dog_image_id, sub_id=None):
-        """."""
-        pass
+    def delete_vote(self, vote_id):
+        """Delete image vote.
+
+        :param vote_id: Image identificator.
+        :type vote_id: str
+
+        :return result: Request result.
+        :rtype: bool
+        """
+        # check that arg has correct type
+        if self.debug:
+            self.check_arg_type(vote_id, str)
+
+        # compose enpoint url
+        url = ''.join([
+            self.base_url,
+            self.api_version,
+            'votes/',
+            vote_id
+        ])
+
+        # make request to remote API server
+        resp = self.make_request('delete', url)
+
+        # convert resp data to python dict
+        result = resp.json()
+
+        return result
 
     @staticmethod
     def process_response(resp_data):
@@ -339,6 +612,7 @@ class DogApi(API):
 
         :param resp_data: Response data.
         :type resp_data: dict
+
         :return dog: Dog object.
         :rtype: models.Dog
         """
