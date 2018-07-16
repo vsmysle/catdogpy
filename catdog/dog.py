@@ -28,42 +28,43 @@ class DogApi(API):
         :return dogs: Fetched dogs.
         :type dogs: list
         """
-
         valid_mine_types = ['gif', 'jpg', 'png']
-        if mine_types not in valid_mine_types:
-            mine_types = None
+        if isinstance(mine_types, list):
+            if all(elem in valid_mine_types for elem in mine_types):
+                mine_types = ', '.join(mine_types)
+        elif mine_types in valid_mine_types:
+            pass
         else:
-            mine_types = ', '.join(mine_types)
+            mine_types = None
+
+        # remove variable so it will not be in locals
+        del valid_mine_types
 
         if not isinstance(limit, int):
             limit = 1
 
-        # combining search url
+        # getting the args that were passed to function
+        args = locals()
+
+        # composing the params dict
+        params = {arg: str(args.get(arg)) for arg in args if args.get(arg)
+                  and arg != 'self'}
+
+        # compose endpoint url
         search_url = ''.join([
             self.base_url,
-            self.api_key,
-            'search'
+            self.api_version,
+            'images/search'
         ])
 
-        params = {}
-
-        # filling the params dict
-        for arg in self.search.__code__.co_varnames:
-            if eval(arg):
-                params[arg] = eval(arg)
-
         # fetching Dogs from API
-        resp = self.make_request(search_url, params)
+        resp = self.make_request('get', search_url, params=params)
 
         # convert response data to python dict
         resp_data = resp.json()
 
-        dogs_list = []
-
-        for dog in resp_data:
-            dogs_list.append(self.process_response(dog))
-
-        return dogs_list
+        print(resp_data)
+        return [self.process_response(dog) for dog in resp_data]
 
     def get_image_by_id(self, image_id):
         """Get dog image by image_id.
@@ -85,8 +86,7 @@ class DogApi(API):
         # convert response to python dict
         resp_data = resp.json()
 
-        dog = self.process_response(resp_data)
-        return dog
+        return self.process_response(resp_data)
 
     @API.requires_api_key
     def upload_image(self, filepath, sub_id=None, breed_ids=None):
@@ -101,8 +101,8 @@ class DogApi(API):
         :param breed_ids: Breeds of the dogs in the image.
         :type breed_ids: list
 
-        :return resp: ???
-        :rtype: ???
+        :return result: Request result.
+        :rtype: bool
         """
         # check that args have valid type
         if self.debug:
@@ -312,10 +312,6 @@ class DogApi(API):
         resp = self.make_request('delete', url)
 
         return resp
-
-    def save_all_images(self, dogs_list):
-        """."""
-        pass
 
     def get_breed_by_id(self, breed_id):
         """Get breed by its identificator.
@@ -654,7 +650,7 @@ class DogApi(API):
 
                 # iterate over all categories
                 for category in resp_data['categories']:
-                    print(category)
+
                     # append Category objects
                     categories.append(
                         Category(**category)

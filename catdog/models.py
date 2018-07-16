@@ -22,16 +22,6 @@ class Dog(object):
                                        self.id,
                                        str(self.__dict__.keys()))
 
-    def save(self, filename=None):
-        """Downloads the dog image from the API.
-
-        :param filename: Output file filename.
-        :type filename: str
-        :return status: Image download status.
-        :rtype: bool
-        """
-        pass
-
 
 class Breed(object):
     """Breed class."""

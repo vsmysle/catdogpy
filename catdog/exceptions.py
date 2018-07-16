@@ -43,3 +43,9 @@ class UnsupportedAPIType(Exception):
     Raises when unknown child class inherits API class.
     """
     pass
+
+
+class NotAValidDirectory(Exception):
+    """NotAValidDirectory.
+    Raises when directory does not exist or user don't have access to it.
+    """

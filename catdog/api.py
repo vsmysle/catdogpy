@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 """API module."""
-import requests
+import json
 import logging
+import requests
 
-from os import environ
+from os import environ, path
 from functools import wraps
 
 from .exceptions import (APIKeyNotSpecified, APIConnectionError,
                          UnsupportedRequestType, UnsupportedAPIType,
-                         IlligalArgumentType)
+                         IlligalArgumentType, NotAValidDirectory)
 
 
 class API(object):
@@ -22,29 +23,31 @@ class API(object):
         :param debug: Debug flag (used for logging).
         :type debug: bool
         """
+        class_name = self.__class__.__name__
 
-        child_class_name = self.__class__.__name__
+        # setting debug as class attribute
+        self.debug = debug
 
-        # setting logger
-        self.logger = logging.getLogger(child_class_name)
+        # setting logger as class attribute
+        self.logger = logging.getLogger(class_name)
 
         if api_key:
             self.api_key = api_key
         else:
-            api_key = environ.get("%s_API_KEY" % child_class_name.upper()[:4])
+            api_key = environ.get("%s_API_KEY" % class_name.upper()[:4])
             if api_key:
                 self.api_key = api_key
             else:
                 raise APIKeyNotSpecified("Please specify API key!")
 
         # check the child api name and set base_url according to it
-        if child_class_name == "DogApi":
+        if class_name == "DogApi":
             self.base_url = "https://api.thedogapi.com"
-        elif child_class_name == "CatApi":
+        elif class_name == "CatApi":
             self.base_url = "http://thecatapi.com/api"
         else:
             raise UnsupportedAPIType(
-                "%s is not supported." % child_class_name
+                "%s is not supported." % class_name
             )
 
         self.api_version = '/v1/'
@@ -57,14 +60,19 @@ class API(object):
 
         :param req_type: Request type.
         :type req_type: str
+
         :param url: Link to remote resource.
         :type url: str
+
         :param headers: Request headers.
         :type headers: dict
+
         :param params: Query params to a request.
         :type params: dict
+
         :param data: Request payload.
         :type data: dict
+
         :returns Response from the remote server.
         :rtype request.Response object
         """
@@ -108,6 +116,8 @@ class API(object):
             raise APIConnectionError("Invalid API key was provided!")
         elif status_code == 403:
             raise APIConnectionError("Connection was refused by API server!")
+        elif status_code == 404:
+            raise APIConnectionError("Not found!")
         elif status_code == 429:
             raise APIConnectionError("Too many requests!")
         elif status_code == 500:
@@ -162,3 +172,55 @@ class API(object):
                     arg_type
                 )
             )
+
+    def save(self, obj, out_dir='./'):
+        """Save the model to the filesystem.
+
+        :param out_dir: Output directory.
+        :type out_dir: str
+
+        :raises NotADirectoryError if provided out_dir is not directory
+        """
+        if not path.isdir(out_dir):
+            raise NotADirectoryError(
+                "Either %s is not a directory or you don't access to it."
+            )
+        # check if obj has url attribute
+        if obj.url:
+
+            # fetch file from remote server
+            raw_data = self.make_request('get', obj.url)
+
+            # compose out_file location string
+            out_file_loc = ''.join([
+                out_dir,
+                obj.url.split('/')[-1]
+            ])
+
+            # write data to a file
+            with open(out_file_loc, 'wb') as out_file:
+                out_file.write(raw_data.content)
+        else:
+            # compose out_file location string
+            out_file_loc = ''.join([
+                out_dir,
+                obj.__class__.__name__,
+                '.json'
+            ])
+
+            # write data to a file
+            with open(out_file_loc, 'a') as out_file:
+                json.dump(obj.__dict__, out_file)
+
+    def save_all(self, obj_list, out_dir="./"):
+        """Save all dogs images.
+
+        :param obj_list: List that contain objects.
+        :type obj_list: list
+
+        :param out_dir: Directory where to save images.
+        :type our_dir: str
+        """
+        # iterate over all objects
+        for obj in obj_list:
+            self.save(obj, out_dir=out_dir)
