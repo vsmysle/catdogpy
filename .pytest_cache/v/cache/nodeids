@@ -1,5 +1,0 @@
-[
-  "tests/test_cat_api.py::test_search",
-  "tests/test_dog_api.py::test_search",
-  "tests/test_dog_api.py::test_get_image_by_id"
-]
