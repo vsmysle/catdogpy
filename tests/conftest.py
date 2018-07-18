@@ -1,18 +1,17 @@
 """Pytest configuration file."""
 import pytest
 
-from catdog import DogApi
-from catdog import CatApi
+from catdog import DogApi, CatApi
 
 
 def pytest_addoption(parser):
     """Adding cli option for pytest."""
     parser.addoption(
-            "--api_name", action="store", default=None
+        "--api_name", action="store", default=None
     )
 
     parser.addoption(
-            "--api_key", action="store", default=None
+        "--api_key", action="store", default=None
     )
 
 
@@ -29,8 +28,7 @@ def api(request):
             api_key = request.config.getoption("--api_key")
 
             return CatApi(api_key, debug=True)
-        else:
-            return CatApi(debug=True)
+        return CatApi(debug=True)
     elif api_name == 'dog':
         if request.config.getoption("--api_key"):
 
@@ -38,10 +36,9 @@ def api(request):
             api_key = request.config.getoption("--api_key")
 
             return DogApi(api_key, debug=True)
-        else:
-            return DogApi(debug=True)
+        return DogApi(debug=True)
     else:
         raise Exception(
-                "Please, pass api name (dog/cat) to the pytest "
-                "via `--api_name={{api_name}}` cli option."
+            "Please, pass api name (dog/cat) to the pytest "
+            "via `--api_name={{api_name}}` cli option."
         )

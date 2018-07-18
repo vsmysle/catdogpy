@@ -2,10 +2,10 @@
 """API module."""
 import json
 import logging
-import requests
-
 from os import environ, path
 from functools import wraps
+import requests
+
 
 from .exceptions import (APIKeyNotSpecified, APIConnectionError,
                          UnsupportedRequestType, UnsupportedAPIType,
@@ -100,7 +100,8 @@ class API(object):
         self.parse_status_code(resp.status_code)
         return resp
 
-    def parse_status_code(self, status_code):
+    @staticmethod
+    def parse_status_code(status_code):
         """Parses response status code value.
 
         :param status_code: Response status code.
@@ -127,10 +128,10 @@ class API(object):
             raise APIConnectionError("API server is not working!")
         else:
             raise APIConnectionError(
-                    "Unknown error with %d status_code" % status_code)
+                "Unknown error with %d status_code" % status_code)
 
     @classmethod
-    def requires_api_key(self, func):
+    def requires_api_key(cls, func):
         """Function decorator that helps to check if api_key value is not None.
 
         :param func: Function prior to which apply decorator.

@@ -1,0 +1,17 @@
+language: python
+python:
+  - "3.3"
+  - "3.4"
+  - "3.5"
+  - "3.5-dev"
+  - "3.6"
+  - "3.6-dev"
+  - "3.7-dev"
+install:
+  - pip install -r requirements.txt
+env:
+  global:
+    - secure: "jAwhGho9zRafxOhN94mBQNSbGsah0dObcsvL6utgL34lU0EKF5l76CuOCeUusXHykgwHNH0dJuiaEO+/c4FqirBQW7LkiU+v6mQs/0fXHSfnKY+cb+hDkdAKqAgpBI1+Shy/YrnYXVds9HNhql1W7pECfVmO/wRbxZ9YX0o+RCGWAjXA2olmq5e8wkNeh+Y4JwOySWS5KbHK2R9BYTc7H5J6kjcvVIwpyofJoC2tNbf2/r1cOLxbN0u+fafxQuiHGHpnbBGdQrzwN8PpXsftWxR56EAOJafI4uS454wb1fX2wMjKBlgSqE2KavBshpuiGbDe/IxGHQ76JuXEy0k5tPU3oxGvooiFjHfyqR/fk2Q9HvX0ES2/d1MZe3U98Wq/fQj8kbUmXvabfqXfR99xzYu9o4oe74Pr8aisFI9Ap2wmWkGSQidIFe/Fxaom0AEm95my62iaLlTWBCHs8wgKEHgoO2JhcCxf3pzVHUgGA4rSSSF+i46GR/RTDP9Xbr8TW83rulEv0z6r056DaLX0xJs1WMFWOM/qazCcmeoQq3/RisUPsrBu/Sd51DnCmZiV6pTSOMp0PoKi4zix2NBYYBHBB47wuyN8RjE+UJnIGyuegy4gdN4GhIuMoWeCwAn+seDFCjxvTqQAKZP/2lYhGzGif83NPG31L/2Pk+ZkPFw="
+script:
+  - python -m pytest -v --api_name="dog" --api_key=$DOG_API_KEY tests/test_dog_api.py
+sudo: false

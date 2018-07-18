@@ -43,6 +43,9 @@ class DogApi(API):
         if not isinstance(limit, int):
             limit = 1
 
+        if self.debug and breed_id:
+            self.check_arg_type(breed_id, int)
+
         # getting the args that were passed to function
         args = locals()
 
@@ -129,12 +132,12 @@ class DogApi(API):
         if sub_id:
             # check that sub_id has correct type
             self.check_arg_type(sub_id, str)
-            data['sub_id'] == sub_id
+            data['sub_id'] = sub_id
 
         if breed_ids:
             # check that breed_ids has correct type
             self.check_arg_type(breed_ids, list)
-            data['breed_ids'] == breed_ids
+            data['breed_ids'] = breed_ids
 
         resp = self.make_request('post', url, params=data, files=files,
                                  headers=headers)
@@ -390,7 +393,7 @@ class DogApi(API):
         # convert resp data to python dict
         dog_data = resp.json()
 
-        return Dog(dog_data)
+        return Dog(*dog_data)
 
     @API.requires_api_key
     def get_favourite_dogs(self):
