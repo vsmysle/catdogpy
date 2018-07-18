@@ -18,6 +18,7 @@ def pytest_addoption(parser):
 
 @pytest.fixture(scope='session')
 def api(request):
+    """."""
     # reading the cli args
     api_name = request.config.getoption('--api_name')
 
