@@ -88,9 +88,9 @@ class API(object):
         if req_type == 'get':
             resp = requests.get(url, headers=headers, params=params)
         elif req_type == 'post':
+            print(data)
             resp = requests.post(url, headers=headers, params=params,
                                  data=data, files=files)
-            pass
         elif req_type == 'delete':
             resp = requests.delete(url, headers=headers, params=params,
                                    data=data)
@@ -111,7 +111,8 @@ class API(object):
             return
         elif status_code == 400:
             raise APIConnectionError(
-                "Invalid format or data was specified in request!")
+                "You dont have permissions to post/delete this "
+                "or invalid data was specified in request!")
         elif status_code == 401:
             raise APIConnectionError("Invalid API key was provided!")
         elif status_code == 403:

@@ -63,7 +63,6 @@ class DogApi(API):
         # convert response data to python dict
         resp_data = resp.json()
 
-        print(resp_data)
         return [self.process_response(dog) for dog in resp_data]
 
     def get_image_by_id(self, image_id):
@@ -201,16 +200,16 @@ class DogApi(API):
         if order not in ['DESC', 'ASC']:
             order = 'DESC'
 
-        params = {}
+        args = locals()
 
         # filling the params dict
-        for arg in self.search.__code__.co_varnames:
-            if eval(arg):
-                params[arg] = eval(arg)
+        params = {arg: str(args.get(arg)) for arg in args if args.get(arg)
+                  and arg != 'self'}
 
         # make request to API server
         resp = self.make_request('get', url, params)
 
+        print(resp)
         # convert return data to python dict
         dogs_data = resp.json()
 
@@ -305,7 +304,7 @@ class DogApi(API):
             'images/',
             image_id,
             '/breeds/',
-            breed_id
+            str(breed_id)
         ])
 
         # making request to the remote server
@@ -331,7 +330,7 @@ class DogApi(API):
             self.base_url,
             self.api_version,
             'breeds/',
-            breed_id
+            str(breed_id)
         ])
 
         # make request to remote API server
