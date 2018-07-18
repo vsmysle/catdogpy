@@ -1,2 +1,3 @@
 __pycache__/
+.pytest_cache/
 dog_api_test.py
