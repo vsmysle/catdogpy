@@ -1,4 +1,8 @@
 """
 Cat API tests.
 """
-# import pytest
+
+
+def test_search(api):
+    """."""
+    assert 0, api
