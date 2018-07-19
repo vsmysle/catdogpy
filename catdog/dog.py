@@ -212,7 +212,6 @@ class DogApi(API):
         # make request to API server
         resp = self.make_request('get', url, params)
 
-        print(resp)
         # convert return data to python dict
         dogs_data = resp.json()
 
